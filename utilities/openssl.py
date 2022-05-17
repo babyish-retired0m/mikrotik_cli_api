@@ -2,7 +2,7 @@
 """
 Copyright 2022. All rights reserved.
 """
-__version__ = "1.2"
+__version__ = "1.3"
 #Creating CA Certificates
 import os
 import utilities.file as file
@@ -40,13 +40,17 @@ class Create_Certificate:
 		self.algorithm=algorithm
 		self.days=str(days)
 		self.config="config"
+		
 		if file.check_dir(parent_dir) is False:
 			file.dirs_make(parent_dir)
-		else: file.dirs_make(path)
+			path=parent_dir+self.domain+"/"
+		else:
+			path=parent_dir+self.domain+"/"
+			file.dirs_make(path)
 		path=parent_dir+self.domain+"/"
 		dir = time.strftime("%Y-%m-%d_%H-%M-%S", time.gmtime())+"_bit_"+self.bit+"_days_"+self.days
 		self.path=path+dir+"/"
-		self.dirs_make(self.path)
+		file.dirs_make(self.path)
 		self.parameters={"ca":{
 				"private_key":{"password":self.passphrase_ca,"path":self.path+self.key_ca,"bit":self.bit,"name":self.key_ca},
 				"certificate":{"algorithm":self.algorithm,"days":self.days,"path":self.path+self.key_ca_certificate,"name":self.key_ca_certificate},
@@ -77,7 +81,7 @@ class Create_Certificate:
 					"time":time.strftime("%H:%M:%S", time.gmtime())
 								}
 			}
-		self.write_text_as_json(self.path+self.config,self.parameters)
+		file.write_text_as_json(self.path+self.config,self.parameters)
 		print("Directory parent:",parent_dir)
 	def All(self):
 		self.Key_CA()
