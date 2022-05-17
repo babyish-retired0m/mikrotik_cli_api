@@ -3,7 +3,7 @@ Collect of useful commands for mikrotik's should be invoked on the command line.
 # usage
 python3 main_api.py
 
-python3 main_api.py -help
+python3 main_api.py --help
 
 usage: main_api.py [-B] [-b] [-c] [-R] [-t] [-n NORDVPN NORDVPN] [-cn] [-f] [-d] [-fc] [-fa] [-h] [-v] [-r] [-S] [-s]
                    [-SC SEND_COMMAND]
