@@ -1,69 +1,76 @@
 #!/usr/bin/env python3
-__version__ = "1.0"
+__version__ = "1.2"
 import argparse
 import utilities.mikrotik_connect_ssh as mikrotik_connect_ssh
 import utilities.mikrotik_commands as mikrotik_commands
 	
-class Checker:
+class Cli_api:
 	"""
 	usage:
 	a brief description of how the mikrotik api should be invoked on the command line.
 	"""
 	def __init__(self):
-		Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh()
-		mikrotik = mikrotik_commands.mikrotik_get_commands(Get_mikrotik)
+		self.Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh()
+		self.mikrotik = mikrotik_commands.mikrotik_get_commands(self.Get_mikrotik)
 	def get_result(self, user_args):
-		Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh()
-		mikrotik = mikrotik_commands.mikrotik_get_commands(Get_mikrotik)
 		"""Get the context."""
 		if user_args.beep:
-			print(":beep frequency=5000 length=100ms")
-			Get_mikrotik.send_commands(":beep frequency=5000 length=100ms")
+			#print(":beep frequency=5000 length=100ms")
+			self.Get_mikrotik.send_commands(":beep frequency=5000 length=100ms")
 		if user_args.system_backup:
-			print("Get_Backup")
-			mikrotik.Get_Backup()
+			#print("Get_Backup")
+			self.mikrotik.Get_Backup()
 		if user_args.certificate:
-			print("Get_Certificate_Create_mikrotik_ssh")
-			mikrotik.Get_Certificate_Create_mikrotik_ssh()
+			#print("Get_Certificate_Create_mikrotik_ssh")
+			print("{}Warning: Certificate_Create_mikrotik_ssh is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
+			self.mikrotik.Get_Certificate_Create_mikrotik_ssh()
 		if user_args.system_reset:
-			print("Get_Reset_Configuration")
-			mikrotik.Get_Reset_Configuration()
+			#print("Get_Reset_Configuration")
+			self.mikrotik.Get_Reset_Configuration()
 		if user_args.system_time:
 			print("Get_system_time")
-			mikrotik.Get_system_clock_set_time()
+			self.mikrotik.Get_system_clock_set_time()
 		if user_args.nordvpn:
-			print("ip ipsec nordvpn")
+			#print("ip ipsec nordvpn")
 			print("nordvpn_CREDENTIALS","username="+user_args.nordvpn[0],"password="+user_args.nordvpn[1])
-			#mikrotik.Get_ip_ipsec_nordvpn(username=user_args.nordvpn[0],password=user_args.nordvpn[1])
+			print("{}Warning: nordvpn Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
+			self.mikrotik.Get_ip_ipsec_nordvpn(username=user_args.nordvpn[0],password=user_args.nordvpn[1])
 		if user_args.certificate_nordvpn:
-			print("Get_certificate_nordvpn")
-			mikrotik.Get_certificate_nordvpn()
+			#print("Get_certificate_nordvpn")
+			print("{}Warning: nordvpn certificate Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
+			self.mikrotik.Get_certificate_nordvpn()
 		if user_args.firewall:
-			print("Get_ip_firewall_filter")
-			mikrotik.Get_ip_firewall_filter()
+			#print("Get_ip_firewall_filter")
+			self.mikrotik.Get_ip_firewall_filter()
 		if user_args.doh:
-			print("Get_ip_dns_over_https")
-			mikrotik.Get_ip_dns_over_https()
+			#print("Get_ip_dns_over_https")
+			self.mikrotik.Get_ip_dns_over_https()
 		if user_args.firewall_country:
-			print("Get_ip_firewall_address_list_CountryIPBlocks")
-			mikrotik.Get_ip_firewall_address_list_CountryIPBlocks()
+			#print("Get_ip_firewall_address_list_CountryIPBlocks")
+			print("{}Warning: firewall address list CountryIPBlocks Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
+			self.mikrotik.Get_ip_firewall_address_list_CountryIPBlocks()
 		if user_args.firewall_amazon:
-			print("Get_ip_firewall_address_list_amazon")
-			mikrotik.Get_ip_firewall_address_list_amazon()
-			#username="NordVPNuserCREDENTIALS",password="NordVPNuserCREDENTIALS"
+			#print("Get_ip_firewall_address_list_amazon")
+			print("{}Warning: firewall address list Amazon Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
+			self.mikrotik.Get_ip_firewall_address_list_amazon()
 		if user_args.beep==False and user_args.system_backup==False and user_args.certificate==False and user_args.system_reset==False and user_args.system_time==False and user_args.nordvpn==None and user_args.certificate_nordvpn==False and user_args.firewall==False and user_args.doh==False and user_args.firewall_country==False and user_args.firewall_amazon==False and user_args.system_reboot==False and user_args.system_shutdown==False and user_args.system_sup_output==False and user_args.send_command==None:
 			self.parser.print_help()
 		if user_args.system_reboot:
-			print("Get system reboot")
-			mikrotik.Get_system_reboot()
+			#print("Get system reboot")
+			self.mikrotik.Get_system_reboot()
 		if user_args.system_shutdown:
-			print("Get system shutdown")
-			mikrotik.Get_system_shutdown()
+			#print("Get system shutdown")
+			self.mikrotik.Get_system_shutdown()
 		if user_args.system_sup_output:
-			print("Get system sup_output")
-			mikrotik.Get_system_sup_output()
+			#print("Get system sup_output")
+			print("{}Warning: system sup_output Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
+			self.mikrotik.Get_system_sup_output()
 		if user_args.send_command:
-			Get_mikrotik.send_commands(user_args.send_command[0])
+			#print(user_args)
+			command=""
+			for i in user_args.send_command:
+				command+=i+" "
+			self.Get_mikrotik.send_commands(command)
 	def get_args(self, json_args={}):
 		"""Set argparse options."""
 		self.parser=argparse.ArgumentParser(add_help=False,description="Collect of useful commands for mikrotik's:")
@@ -89,7 +96,7 @@ class Checker:
 		group.add_argument('-r', '--reboot', dest='system_reboot', action='store_true', default=False, help="mikrotik get system reboot")
 		group.add_argument('-S', '--shutdown', dest='system_shutdown', action='store_true', default=False, help="mikrotik get system shutdown")
 		group.add_argument('-s', '--sup_output', dest='system_sup_output', action='store_true', default=False, help="mikrotik get system sup_output")
-		group.add_argument('-SC', '--send', dest='send_command', nargs=1, type=str, help="send command as input separated by space.")
+		group.add_argument('-SC', '--send', dest='send_command', action='extend', nargs='+', type=str, help="send command as input separated by space, comment \" \\\"")
 		
 		args = self.parser.parse_args();
 		return args
@@ -98,8 +105,8 @@ if __name__ == '__main__':
 	import sys
 	import main_api
 	try:
-		CheckerObject = Checker();
-		CheckerObject.get_result(CheckerObject.get_args(json_args={}))
+		Mikrotik_cli_api = Cli_api();
+		Mikrotik_cli_api.get_result(Mikrotik_cli_api.get_args(json_args={}))
 	except KeyboardInterrupt:
 		print('{}Canceling script...{}\n'.format('\033[33m', '\033[39m'))
 		sys.exit(1)
