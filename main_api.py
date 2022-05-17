@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-__version__ = "1.2"
+__version__ = "1.3"
 import argparse
 import utilities.mikrotik_connect_ssh as mikrotik_connect_ssh
 import utilities.mikrotik_commands as mikrotik_commands
