@@ -8,16 +8,19 @@ usage: main_api.py [-B] [-b] [-c] [-R] [-t] [-n NORDVPN NORDVPN] [-cn] [-f] [-d]
 
 Collect of useful commands for mikrotik's:
 
-group1:
-  group1 description
-
   -B, --beep            send command :beep
+  
   -b, --backup          mikrotik get backup
+  
   -c, --certificate     mikrotik get certificate create ssh
+  
   -R, --reset           mikrotik get reset configuration
+  
   -t, --time            mikrotik change system time
+  
   -n NORDVPN NORDVPN, --nordvpn NORDVPN NORDVPN
                         CREDENTIALS as input separated by space: username password.
+                        
   -cn, --certificate_nordvpn
                         mikrotik get certificate nordvpn
   -f, --firewall        mikrotik get ip firewall filter
