@@ -1,0 +1,36 @@
+{
+	"commands_default_1": {
+		"user_password_access": null
+	},
+	"commands_default_2": {
+		"system_clock": null,
+		"connectivity_access": "/user set 0 address=192.168.88.0/24",
+		"ip_firewall_limit_filter_21": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=21 action=drop comment=\"port\"",
+		"ip_firewall_limit_filter_22": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=22 action=drop comment=\"port\"",
+		"ip_firewall_limit_filter_23": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=23 action=drop comment=\"port\"",
+		"ip_firewall_limit_filter_80": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=80 action=drop comment=\"port\"",
+		"ip_firewall_limit_filter_443": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=443 action=drop comment=\"port\"",
+		"ip_firewall_limit_filter_8291": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=8291 action=drop comment=\"port\"",
+		"ip_firewall_limit_filter_8728": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=8728 action=drop comment=\"port\"",
+		"ip_firewall_limit_filter_8729": "/ip firewall filter add chain=input in-interface=ether1 protocol=tcp port=8729 action=drop comment=\"port\"",
+		"ip_service_disable": "/ip service disable ftp,telnet,www,www-ssl,api,winbox,api-ssl",
+		"ip_service_set": "/ip service set ssh address=192.168.88.0/24",
+		"tool_bandwidth-server": "/tool bandwidth-server set enabled=no",
+		"ip_ssh_set": "/ip ssh set strong-crypto=yes host-key-size=2048",
+		"system_script_ip_ssh_2_add": "/system/script add name=script_ip_ssh_2 source=\":execute {/ip ssh regenerate-host-key;:log info \\\"mikrotik ip ssh regenerate-host-key, host-key-size=4096 jobs done\\\";:log info \\\"SSH host key regenerated!\\\"}\"",
+		"system_script_ip_ssh_2_run": "/system/script run script_ip_ssh_2",
+		"system_script_ip_ssh_2_remove": "/system/script remove script_ip_ssh_2",
+		"ip_proxy": "/ip proxy set enabled=no",
+		"ip_socks": "/ip socks set enabled=no",
+		"ip_upnp": "/ip upnp set enabled=no",
+		"ip_cloud": "/ip cloud set ddns-enabled=no update-time=no",
+		"system_logging_dns": "/system logging add action=memory topics=dns disabled=yes",
+		"system_logging_ipsec": "/system logging add action=echo topics=ipsec disabled=yes",
+		"system_logging_error": "/system logging add action=echo topics=error disabled=yes",
+		"system_logging_info": "/system logging enable numbers=0",
+		"system_shutdown": "/system/script add name=system_shutdown source=\":execute {:log info \\\"system shutdown\\\";:beep;/system/shutdown;:delay 1;:put y;}\"",
+		"system_reboot": "/system/script add name=system_reboot source=\":execute {:log info \\\"system reboot\\\";:beep;/system/reboot;:delay 1;:put y;}\"",
+		"system_reset": "/system/script add name=system_reset_configuration source=\":execute {/system/reset-configuration;:delay 1;:put y;}\"",
+		"ip_dns": "/ip/dns/set cache-size=4096"
+	}
+}
