@@ -3,7 +3,7 @@
 """
 Copyright 2022. All rights reserved.
 """
-__version__ = "1.2"
+__version__ = "1.3"
 
 _text_file='file'
 _text_directory='directory'
@@ -97,5 +97,5 @@ def dirs_make(path):
 		print("Directory: '{}' created successfully, path: '{}'".format(dir,path))
 	except Exception as error:
 		#raise error
-		if self.check_dir(path): pass
+		if check_dir(path): pass
 		else: print("Cannot create a directory '{}', path: '{}'".format(dir,path))
