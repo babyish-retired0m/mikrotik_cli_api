@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-__version__ = "1.4"
+__version__ = "1.5"
 import argparse
 import utilities.mikrotik_connect_ssh as mikrotik_connect_ssh
 import utilities.mikrotik_commands as mikrotik_commands
 import os
+import pathlib
 class Cli_api:
 	"""
 	usage:
