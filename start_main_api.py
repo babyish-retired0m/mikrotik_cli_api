@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-__version__ = "1.3"
+__version__ = "1.4"
 import argparse
 import utilities.mikrotik_connect_ssh as mikrotik_connect_ssh
 import utilities.mikrotik_commands as mikrotik_commands
-	
+import os
 class Cli_api:
 	"""
 	usage:
 	a brief description of how the mikrotik api should be invoked on the command line.
 	"""
-	def __init__(self):
-		self.Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh()
+	def __init__(self, mikrotik_parent_dir = os.path.dirname(__file__) + "/"):
+		self.Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh(mikrotik_parent_dir)
 		self.mikrotik = mikrotik_commands.mikrotik_get_commands(self.Get_mikrotik)
 	def get_result(self, user_args):
 		"""Get the context."""
@@ -53,7 +53,7 @@ class Cli_api:
 			#print("Get_ip_firewall_address_list_amazon")
 			print("{}Warning: firewall address list Amazon Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
 			self.mikrotik.Get_ip_firewall_address_list_amazon()
-		if user_args.beep==False and user_args.system_backup==False and user_args.certificate==False and user_args.system_reset==False and user_args.system_time==False and user_args.nordvpn==None and user_args.certificate_nordvpn==False and user_args.firewall==False and user_args.doh==False and user_args.firewall_country==False and user_args.firewall_amazon==False and user_args.system_reboot==False and user_args.system_shutdown==False and user_args.system_sup_output==False and user_args.send_command==None:
+		if user_args.beep==False and user_args.system_backup==False and user_args.certificate==False and user_args.system_reset==False and user_args.system_time==False and user_args.nordvpn==None and user_args.certificate_nordvpn==False and user_args.firewall==False and user_args.doh==False and user_args.firewall_country==False and user_args.firewall_amazon==False and user_args.system_reboot==False and user_args.system_shutdown==False and user_args.system_sup_output==False and user_args.send_command==None and user_args.sftp_get==None and user_args.sftp_put==None:
 			self.parser.print_help()
 		if user_args.system_reboot:
 			#print("Get system reboot")
@@ -71,6 +71,12 @@ class Cli_api:
 			for i in user_args.send_command:
 				command+=i+" "
 			self.Get_mikrotik.send_commands(command)
+		if user_args.sftp_get:
+			print(user_args)
+			print(user_args.sftp_get)
+		if user_args.sftp_put:
+			print(user_args)
+			print(user_args.sftp_put)
 	def get_args(self, json_args={}):
 		"""Set argparse options."""
 		self.parser=argparse.ArgumentParser(add_help=False,description="Collect of useful commands for mikrotik's:")
@@ -97,15 +103,16 @@ class Cli_api:
 		group.add_argument('-S', '--shutdown', dest='system_shutdown', action='store_true', default=False, help="mikrotik get system shutdown")
 		group.add_argument('-s', '--sup_output', dest='system_sup_output', action='store_true', default=False, help="mikrotik get system sup_output")
 		group.add_argument('-SC', '--send', dest='send_command', action='extend', nargs='+', type=str, help="send command as input separated by space, comment \" \\\"")
+		group.add_argument('-g', '--get', dest='sftp_get', type=pathlib.Path, help="mikrotik sftp get")
+		group.add_argument('-p', '--put', dest='sftp_put', type=pathlib.Path, help="mikrotik sftp put")
 		
 		args = self.parser.parse_args();
 		return args
 
 if __name__ == '__main__':
-	import sys
-	import main_api
+	import start_main_api
 	try:
-		Mikrotik_cli_api = Cli_api();
+		Mikrotik_cli_api = Cli_api(mikrotik_parent_dir = os.path.dirname(__file__) + "/");
 		Mikrotik_cli_api.get_result(Mikrotik_cli_api.get_args(json_args={}))
 	except KeyboardInterrupt:
 		print('{}Canceling script...{}\n'.format('\033[33m', '\033[39m'))
