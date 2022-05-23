@@ -1,0 +1,41 @@
+{
+    "configuration": {
+        "host": "192.168.88.1",
+        "bit": 4096,
+        "days": 256,
+        "algorithm": "sha256",
+        "mikrotik_parent_dir": "/Users/johndoe/mikrotik_cli_api/",
+        "mikrotik_parent_dir_openssl": "/Users/johndoe/mikrotik_cli_api/openssl/",
+        "connect_default_1": true,
+        "connect_default_2": true,
+        "connect_private_key": true,
+        "commands_default": true
+    },
+    "connect_default_1": {
+        "host": "192.168.88.1",
+        "port": "22",
+        "username": "admin",
+        "password": null,
+        "pkey_path": null,
+        "pkey_password": null,
+        "pkey_length": null
+    },
+    "connect_default_2": {
+        "host": "192.168.88.1",
+        "port": "22",
+        "username": "admin",
+        "password": "72b7097wyCmZcNXXqfxOVuMcEVQgeJqGZfG4nW9rCpgTRiYO7PEcR.c8.VIi",
+        "pkey_path": null,
+        "pkey_password": null,
+        "pkey_length": null
+    },
+    "connect_private_key": {
+        "host": "192.168.88.1",
+        "port": "22",
+        "username": "2022-05-22_08-21_132b130513c5mE",
+        "password": "e8WbTvFIRqZaMdlzmuTwWLf3mgblBW62GQC67mGzg5RoEUobK",
+        "pkey_path": "/Users/johndoe/mikrotik_cli_api/openssl/192.168.88.1/2022-05-22_05-21-34_bit_4096_days_256/192.168.88.1.key",
+        "pkey_password": "132b131213cmoHn7wnHyw2CyPFuEig2.UMpNd2evGAnWaPAu5eZQlQ5hKjTPwa.",
+        "pkey_length": 63
+    }
+}

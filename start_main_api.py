@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-__version__ = "1.5"
+__version__ = "1.7"
 import argparse
 import utilities.mikrotik_connect_ssh as mikrotik_connect_ssh
 import utilities.mikrotik_commands as mikrotik_commands
@@ -73,11 +73,17 @@ class Cli_api:
 				command+=i+" "
 			self.Get_mikrotik.send_commands(command)
 		if user_args.sftp_get:
-			print(user_args)
-			print(user_args.sftp_get)
+			path = pathlib.Path(user_args.sftp_get)
+			remotepath = "/" + path.name
+			localpath = os.path.dirname(__file__) + "/"
+			self.Get_mikrotik.get_sftp_client(remotepath, localpath, get = True)
 		if user_args.sftp_put:
-			print(user_args)
-			print(user_args.sftp_put)
+			path = pathlib.Path(user_args.sftp_get)
+			if path.exists():
+				remotepath = path
+				localpath = "/" + path.name
+			else: ("False existing file:",p)
+			self.Get_mikrotik.get_sftp_client(remotepath, localpath, get = False)
 	def get_args(self, json_args={}):
 		"""Set argparse options."""
 		self.parser=argparse.ArgumentParser(add_help=False,description="Collect of useful commands for mikrotik's:")
@@ -104,8 +110,8 @@ class Cli_api:
 		group.add_argument('-S', '--shutdown', dest='system_shutdown', action='store_true', default=False, help="mikrotik get system shutdown")
 		group.add_argument('-s', '--sup_output', dest='system_sup_output', action='store_true', default=False, help="mikrotik get system sup_output")
 		group.add_argument('-SC', '--send', dest='send_command', action='extend', nargs='+', type=str, help="send command as input separated by space, comment \" \\\"")
-		group.add_argument('-g', '--get', dest='sftp_get', type=pathlib.Path, help="mikrotik sftp get")
-		group.add_argument('-p', '--put', dest='sftp_put', type=pathlib.Path, help="mikrotik sftp put")
+		group.add_argument('-g', '--get', dest='sftp_get', type=pathlib.Path, help="mikrotik sftp get, remote file name")
+		group.add_argument('-p', '--put', dest='sftp_put', type=pathlib.Path, help="mikrotik sftp put, local file path")
 		
 		args = self.parser.parse_args();
 		return args
