@@ -2,7 +2,7 @@
 Collect of useful commands for mikrotik's should be invoked on the command line.
 # usage
 
-Get reset mikrotik to system defaults.
+Reset mikrotik system configuration to defaults.
 
 
 python3 main_api.py --help
