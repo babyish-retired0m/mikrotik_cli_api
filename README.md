@@ -1,11 +1,13 @@
 # mikrotik cli api
 Collect of useful commands for mikrotik's should be invoked on the command line.
 # usage
-python3 main_api.py
+
+Reset mikrotik system configuration to defaults.
+
 
 python3 main_api.py --help
 
-usage: main_api.py [-B] [-b] [-c] [-R] [-t] [-n NORDVPN NORDVPN] [-cn] [-f] [-d] [-fc] [-fa] [-h] [-v] [-r] [-S] [-s]
+usage: main_api.py [-B] [-b] [-c] [-R] [-t] [-n username password] [-cn] [-f] [-d] [-fc] [-fa] [-h] [-v] [-r] [-S] [-s]
                    [-SC SEND_COMMAND]
 
 Collect of useful commands for mikrotik's:
@@ -20,7 +22,7 @@ Collect of useful commands for mikrotik's:
   
   -t, --time            mikrotik change system time
   
-  -n NORDVPN NORDVPN, --nordvpn NORDVPN NORDVPN
+  -n username password, --nordvpn username password
                         CREDENTIALS as input separated by space: username password.
                         
   -cn, --certificate_nordvpn
@@ -47,4 +49,4 @@ Collect of useful commands for mikrotik's:
   -s, --sup_output      mikrotik get system sup_output
   
   -SC SEND_COMMAND, --send SEND_COMMAND
-                        send command as input separated by space.
+                        send command as input.

@@ -109,7 +109,7 @@ class Cli_api:
 		group.add_argument('-r', '--reboot', dest='system_reboot', action='store_true', default=False, help="mikrotik get system reboot")
 		group.add_argument('-S', '--shutdown', dest='system_shutdown', action='store_true', default=False, help="mikrotik get system shutdown")
 		group.add_argument('-s', '--sup_output', dest='system_sup_output', action='store_true', default=False, help="mikrotik get system sup_output")
-		group.add_argument('-SC', '--send', dest='send_command', action='extend', nargs='+', type=str, help="send command as input separated by space, comment \" \\\"")
+		group.add_argument('-SC', '--send', dest='send_command', action='extend', nargs='+', type=str, help="send command as input, comment \" \\\"")
 		group.add_argument('-g', '--get', dest='sftp_get', type=pathlib.Path, help="mikrotik sftp get, remote file name")
 		group.add_argument('-p', '--put', dest='sftp_put', type=pathlib.Path, help="mikrotik sftp put, local file path")
 		
