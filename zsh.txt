@@ -1,2 +1,0 @@
-ssh -i /Users/johndoe/mikrotik_cli_api/openssl/192.168.88.1/2022-05-23_05-09-16_bit_4096_days_256/192.168.88.1.key 2022-05-23_08-09_62b6136.41BZor@192.168.88.1
-62b6056bTCaW.6FUj7.akQehykGhe3UsqW.xYIMhuNwrUS4X86M4Re.NUa8u
