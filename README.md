@@ -49,4 +49,4 @@ Collect of useful commands for mikrotik's:
   -s, --sup_output      mikrotik get system sup_output
   
   -SC SEND_COMMAND, --send SEND_COMMAND
-                        send command as input separated by space.
+                        send command as input.
