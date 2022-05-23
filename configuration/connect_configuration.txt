@@ -32,10 +32,10 @@
     "connect_private_key": {
         "host": "192.168.88.1",
         "port": "22",
-        "username": "2022-05-22_08-21_132b130513c5mE",
-        "password": "e8WbTvFIRqZaMdlzmuTwWLf3mgblBW62GQC67mGzg5RoEUobK",
-        "pkey_path": "/Users/johndoe/mikrotik_cli_api/openssl/192.168.88.1/2022-05-22_05-21-34_bit_4096_days_256/192.168.88.1.key",
-        "pkey_password": "132b131213cmoHn7wnHyw2CyPFuEig2.UMpNd2evGAnWaPAu5eZQlQ5hKjTPwa.",
-        "pkey_length": 63
+        "username": "2022-05-23_08-09_62b6136.41BZor",
+        "password": "mfA0KQe3UGBKmP.wHGzFV0kG6WiAl7Wwlc6rGzw6m2JsKe",
+        "pkey_path": "/Users/johndoe/mikrotik_cli_api/openssl/192.168.88.1/2022-05-23_05-09-16_bit_4096_days_256/192.168.88.1.key",
+        "pkey_password": "62b6056bTCaW.6FUj7.akQehykGhe3UsqW.xYIMhuNwrUS4X86M4Re.NUa8u",
+        "pkey_length": 60
     }
 }
