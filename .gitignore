@@ -1,4 +1,18 @@
+# Distribution / packaging mikrotik_cli_api
+backup/
 connect_configuration.txt
+openssl/
+*.key
+*.pem
+*.crt
+*.csr
+*.p12
+*.pub
+config.json
+*.srl
+*.log
+zsh.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
