@@ -1,9 +1,11 @@
 # mikrotik cli api
 Collect of useful commands for mikrotik's should be invoked on the command line.
-# usage
 
+# Requirements
 Reset mikrotik system configuration to defaults.
 
+# Usage
+The recommended way to use mikrotik_cli_api is to use `python3`:
   '''shell
   $ python3 main_api.py --help
   '''
@@ -11,6 +13,7 @@ Reset mikrotik system configuration to defaults.
 usage: main_api.py [-B] [-b] [-c] [-R] [-t] [-n username password] [-cn] [-f] [-d] [-fc] [-fa] [-h] [-v] [-r] [-S] [-s]
                    [-SC SEND_COMMAND]
 
+- **Basic functions**
 Collect of useful commands for mikrotik's:
 
   -B, --beep            send command :beep
