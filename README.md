@@ -4,9 +4,10 @@ Collect of useful commands for mikrotik's should be invoked on the command line.
 
 Reset mikrotik system configuration to defaults.
 
-
-python3 main_api.py --help
-
+  '''
+  $ python3 main_api.py --help
+  '''
+  
 usage: main_api.py [-B] [-b] [-c] [-R] [-t] [-n username password] [-cn] [-f] [-d] [-fc] [-fa] [-h] [-v] [-r] [-S] [-s]
                    [-SC SEND_COMMAND]
 
