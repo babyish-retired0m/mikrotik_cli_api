@@ -2,23 +2,15 @@
 """
 Copyright 2022. All rights reserved.
 """
-__version__ = "1.2"
+__version__ = "1.4"
 import os
 import json
 import time
 import utilities.paramiko_ssh as paramiko_ssh
 import utilities.openssl as openssl
 import utilities.password as password
-
-
-class Clr:
-    """Text colors."""
-    RST = '\033[39m'; BLACK = '\033[30m'; RED = '\033[31m'
-    GREEN = '\033[32m'; YELLOW = '\033[33m'; VIOLET = '\033[34m'
-    PINK = '\033[35m'; BLUE = '\033[36m'; GREY = '\033[37m'
-    BLACK2 = '\033[40m'; RST2 = '\033[49m'; RED2 = '\033[41m'
-    GREEN2 = '\033[42m'; YELLOW2 = '\033[43m'; VIOLET2 = '\033[44m'
-    PINK2 = '\033[45m'; BLUE2 = '\033[46m'; GREY2 = '\033[47m'
+import utilities.utility as utility
+import pathlib
 
 class get_mikrotik_connect_ssh():
 	"""
@@ -45,7 +37,7 @@ class get_mikrotik_connect_ssh():
 		self.mikrotik_default_password = password.create(1)
 		self.host = "192.168.88.1"
 		self.port = "22"
-		self.bit = 4096
+		self.bit = 8192;#4096
 		self.days = 256
 		self.algorithm = "sha256"
 		_connect_default_1, _connect_default_2 = False, False
@@ -64,61 +56,53 @@ class get_mikrotik_connect_ssh():
 		json.dump(self.connect_configuration_dict, fp = open(self.connect_configuration_path, 'w'), indent = 4)
 		return self.connect_configuration_dict
 	def __get_commands__(self, commands):
-		try:
-			if isinstance(commands, dict):
-				for (enum,command) in enumerate(commands):
-					print(Clr.YELLOW+"command #"+str(enum)+":",Clr.RST+Clr.BLUE+commands[command]+Clr.RST)
-					self.__get_command__(commands[command])
-			elif isinstance(commands, list):
-				for (enum,command) in enumerate(commands):
-					print(Clr.YELLOW+"command #"+str(enum)+":",Clr.BLUE+command+Clr.RST)
-					self.__get_command__(command)
-			elif isinstance(commands, str):
-				print(Clr.YELLOW+"command #0:",Clr.BLUE+commands+Clr.RST)
-				get_Client_command = self.__get_command__(commands)
-				if get_Client_command: return True;
-				else: return False
-			else: print("Are instance dict, list, str?")
-			return True
-		except Exception as error:
-			print("Commands failed"); print(error); return False
+		if isinstance(commands, dict):
+			for (enum,command) in enumerate(commands):
+				print(utility.Clr.YELLOW+"command #"+str(enum)+":",utility.Clr.RST+utility.Clr.BLUE+commands[command]+utility.Clr.RST)
+				get_response = self.__get_command__(commands[command])
+		elif isinstance(commands, list):
+			for (enum,command) in enumerate(commands):
+				print(utility.Clr.YELLOW+"command #"+str(enum)+":",utility.Clr.BLUE+command+utility.Clr.RST)
+				get_response = self.__get_command__(command)
+		elif isinstance(commands, str):
+			print(utility.Clr.YELLOW+"command #0:",utility.Clr.BLUE+commands+utility.Clr.RST)
+			get_response = self.__get_command__(commands)
+		else:
+			print("Are instance dict, list, str?")
+			return False
+		return True if get_response else False
 	def __get_command__(self, command):
 		Client = self.__get_connect_configuration__()
 		try:
-			get_response = Client.get_ssh_client(command)
-			#Client.get_ssh_client(self.command_beep)
-			#return True if get_Client_command else return False
-			if get_response is True: 
-				#print(Client.recv_status)
-				#print("True");
-				return True;
-			else:
-				#print(Client.recv_status)
-				#print("False");
-				return False
+			return True if Client.get_ssh_client(command) else False
 		except Exception as error:
-			print("Command failed"); print(error); return False#break
+			print("Command failed");
+			print(error); 
+			return False
 	def get_sftp_client(self, remotepath, localpath, get = False):
-		Client = self.__get_connect_configuration__()
-		try:
-			
-			if get: 
-				Client.get_sftp_client_get(remotepath, localpath)
-				print(Clr.GREEN+"Successful sftp! Get:",Clr.RST+remotepath)
-			else:
-				Client.get_sftp_client_put(localpath, remotepath)
-				print(Clr.GREEN+"Successful sftp! Put:",Clr.RST+remotepath)
-			Client.get_ssh_client(self.command_beep);
-			return True
-		except Exception as error:
-			print("Command sftp failed"); print(error); return False#break
+		def __get_sftp_check_path__(localpath):
+			return True if pathlib.Path(localpath).exists() else print("False existing file:", localpath); sys.exit(1)
+		if __get_sftp_check_path__(localpath = localpath):
+			Client = self.__get_connect_configuration__()
+			try:
+				if get: 
+					get_response = Client.get_sftp_client_get(remotepath, localpath)
+					print(utility.Clr.GREEN+"Successful sftp! Get:",utility.Clr.RST+remotepath)
+				else:
+					get_response = Client.get_sftp_client_put(localpath, remotepath)
+					print(utility.Clr.GREEN+"Successful sftp! Put:",utility.Clr.RST+remotepath)
+				Client.get_ssh_client(self.command_beep);
+				return True
+			except Exception as error:
+				print("Command sftp failed"); print(error); return 
+	
 	def __get_connect_configuration__(self):
-		connect_conf=self.__get_configuration__()
+		connect_conf = self.__get_configuration__()
 		host, port = connect_conf["host"], connect_conf["port"]
 		username, password = connect_conf["username"], connect_conf["password"]
 		pkey_path = connect_conf["pkey_path"]
 		pkey_password = connect_conf["pkey_password"]
-		Client=paramiko_ssh.Connect(host, port, username, password, pkey_path, pkey_password, log = False)
+		Client = paramiko_ssh.Connect(host = host, port = port, username = username, password = password, pkey_path = pkey_path, pkey_password = pkey_password, log = False)
 		return Client
 	def __get_configuration__(self):
 		if self.connect_configuration["configuration"]["connect_default_1"] is False: configuration = self.connect_configuration["connect_default_1"]
@@ -127,58 +111,36 @@ class get_mikrotik_connect_ssh():
 		else: configuration = self.connect_configuration["connect_private_key"]
 		return configuration
 	def send_commands(self, commands):
-		commands_default = json.load(open(self.commands_default_path))
-		#connect_configuration = json.load(open(self.connect_configuration_path))
-		import os
-		if os.path.isfile(self.connect_configuration_path): self.connect_configuration=json.load(open(self.connect_configuration_path))
-		else:
-			self.connect_configuration = self.__create_connect_configuration_dict__()
 		if self.connect_configuration["configuration"]["commands_default"] is False:
-			print(Clr.RED2+"Default commands are False"+Clr.RST2)
+			commands_default = json.load(open(self.commands_default_path))
+			print(utility.Clr.RED2+"Default commands are False"+utility.Clr.RST2)
 			if self.connect_configuration["configuration"]["connect_default_1"] is False:
-				commands_default["commands_default_1"]["user_password_access"] = "/user set 0 password=\""+self.connect_configuration["connect_default_2"]["password"]+"\""
-				if self.__get_commands__(commands_default["commands_default_1"]) is True:
+				commands_default["commands_default_1"]["user_password_access"] = "/user set admin password=\"" + self.connect_configuration["connect_default_2"]["password"] + "\""
+				if self.__get_commands__(commands_default["commands_default_1"]["user_password_access"]):
 					self.connect_configuration["configuration"]["connect_default_1"] = True
-					#connect_configuration["connect_default_2"]["password"] = commands_default
 					json.dump(self.connect_configuration, fp = open(self.connect_configuration_path, 'w'), indent = 4)
 			if self.connect_configuration["configuration"]["connect_default_2"] is False:
-				commands_default["commands_default_2"]["system_clock"] = "/system clock set date="+time.strftime("%b/%d/%Y", time.localtime()).lower()+" time="+time.strftime("%H:%M:%S", time.localtime())
-				if self.__get_commands__(commands_default["commands_default_2"]) is True:
+				commands_default["commands_default_2"]["system_clock"] = "/system clock set date=" + time.strftime("%b/%d/%Y", time.localtime()).lower() + " time=" + time.strftime("%H:%M:%S", time.localtime()) + ";:beep;"
+				if self.__get_commands__(commands_default["commands_default_2"]):
 					self.connect_configuration["configuration"]["connect_default_2"] = True
 					self.connect_configuration["configuration"]["commands_default"] = True
-					#connect_configuration["configuration"]["connect_private_key"] = True
 					json.dump(self.connect_configuration, fp = open(self.connect_configuration_path, 'w'), indent = 4)
-			if commands: self.__get_commands__(commands)
-			else: print("Are list of command(s) dict, list, str?");
+			return True if self.__get_commands__(commands) else False
 		else:
-			get_response = self.__connect_default__(commands)
-			if get_response: 
-				#print("True"); 
-				return True
-			else: 
-				#print("False");
-				return False
-			
+			return True if self.__connect_default__(commands) else False
 	def __connect_default__(self, commands):
-		connect_configuration = json.load(open(self.connect_configuration_path))
-		if connect_configuration["configuration"]["connect_private_key"] is True:
-			if commands:
-				get_commands = self.__get_commands__(commands); 
-				return True
-			else: 
-				print("Are list of command(s) dict, list, str?"); 
-				return False
+		if self.connect_configuration["configuration"]["connect_private_key"]:
+			return True if self.__get_commands__(commands) else False
 		else:
-			print(Clr.RED2+"Connect private key is False"+Clr.RST2)
-			if commands: get_commands = self.__get_commands__(commands); return True
-			else: print("Are list of command(s) dict, list, str?"); return False
+			print(utility.Clr.RED2 + "Connect private key is False" + utility.Clr.RST2)
+			return True if self.__get_commands__(commands) else False
 
 if __name__ == '__main__':
 	import json
 	import os
 	import mikrotik_connect_ssh
 	
-	if os.path.isfile(os.path.expanduser('~')+"/mikrotik/connect_configuration.txt"):
+	if os.path.isfile(os.path.expanduser('~') + "/mikrotik/connect_configuration.txt"):
 		connect_configuration = json.load(open(connect_configuration_path))
 		Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh(mikrotik_parent_dir = connect_configuration["configuration"]["mikrotik_parent_dir"])
 	else: Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh()

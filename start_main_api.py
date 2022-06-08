@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-__version__ = "1.8"
+__version__ = "1.9"
 import argparse
 import utilities.mikrotik_connect_ssh as mikrotik_connect_ssh
 import utilities.mikrotik_commands as mikrotik_commands
 import os
+import sys
 import pathlib
 class Cli_api:
 	"""
@@ -18,6 +19,8 @@ class Cli_api:
 		if user_args.beep:
 			#print(":beep frequency=5000 length=100ms")
 			self.Get_mikrotik.send_commands(":beep frequency=5000 length=100ms")
+		if user_args.default_configuration:
+			self.mikrotik.Get_default_configuration()
 		if user_args.system_backup:
 			#print("Get_Backup")
 			self.mikrotik.Get_Backup()
@@ -54,8 +57,8 @@ class Cli_api:
 			#print("Get_ip_firewall_address_list_amazon")
 			print("{}Warning: firewall address list Amazon Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
 			self.mikrotik.Get_ip_firewall_address_list_amazon()
-		if user_args.beep==False and user_args.system_backup==False and user_args.certificate==False and user_args.system_reset==False and user_args.system_time==False and user_args.nordvpn==None and user_args.certificate_nordvpn==False and user_args.firewall==False and user_args.doh==False and user_args.firewall_country==False and user_args.firewall_amazon==False and user_args.system_reboot==False and user_args.system_shutdown==False and user_args.system_sup_output==False and user_args.send_command==None and user_args.sftp_get==None and user_args.sftp_put==None:
-			self.parser.print_help()
+		"""if user_args.beep==False and user_args.system_backup==False and user_args.certificate==False and user_args.system_reset==False and user_args.system_time==False and user_args.nordvpn==None and user_args.certificate_nordvpn==False and user_args.firewall==False and user_args.doh==False and user_args.firewall_country==False and user_args.firewall_amazon==False and user_args.system_reboot==False and user_args.system_shutdown==False and user_args.system_sup_output==False and user_args.send_command==None and user_args.sftp_get==None and user_args.sftp_put==None:
+			self.parser.print_help()"""
 		if user_args.system_reboot:
 			#print("Get system reboot")
 			self.mikrotik.Get_system_reboot()
@@ -75,25 +78,28 @@ class Cli_api:
 		if user_args.sftp_get:
 			path = pathlib.Path(user_args.sftp_get)
 			remotepath = "/" + path.name
-			localpath = os.path.dirname(__file__) + "/"
+			localpath = os.path.dirname(__file__) + "/" + path.name
 			self.Get_mikrotik.get_sftp_client(remotepath, localpath, get = True)
+			print("path:",localpath)
 		if user_args.sftp_put:
-			path = pathlib.Path(user_args.sftp_get)
+			path = pathlib.Path(user_args.sftp_put)
 			if path.exists():
-				remotepath = path
-				localpath = "/" + path.name
-			else: ("False existing file:",p)
+				localpath = path
+				remotepath = "/" + path.name
+			else: ("False existing file:",path)
 			self.Get_mikrotik.get_sftp_client(remotepath, localpath, get = False)
 	def get_args(self, json_args={}):
 		"""Set argparse options."""
 		self.parser=argparse.ArgumentParser(add_help=False,description="Collect of useful commands for mikrotik's:")
-		if len(json_args) > 0:
+		"""if len(json_args) > 0:
 			args = self.parser.parse_args()
 			setattr(args, 'beep', True)
 			setattr(args, 'backup', False)
-			return args		
-		group = self.parser.add_argument_group('group1', 'group1 description')
+			return args	"""	
+		#group = self.parser.add_argument_group('group1', 'group1 description')
+		group = self.parser.add_mutually_exclusive_group(required = True)
 		group.add_argument('-B', '--beep', dest='beep', action='store_true', default=False, help="send command :beep")
+		group.add_argument('-D', '--default', dest='default_configuration', action='store_true', default=False, help="default_configuration")
 		group.add_argument('-b', '--backup', dest='system_backup', action='store_true', default=False, help="mikrotik get backup")
 		group.add_argument('-c', '--certificate', dest='certificate', action='store_true', default=False, help="mikrotik get certificate create ssh")
 		group.add_argument('-R', '--reset', dest='system_reset', action='store_true', default=False, help="mikrotik get reset configuration")
