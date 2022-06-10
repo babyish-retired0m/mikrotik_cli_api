@@ -1,4 +1,4 @@
-/system script add name=certificate_GeneratedNordVPN source={
+/system script add name=certificate_GeneratedNordVPN comment="def2conf" source={
 	:local name "GeneratedNordVPN";
 	:local nameTEMP ($name . "TEMP");
 	:local o [/certificate find name=$name];

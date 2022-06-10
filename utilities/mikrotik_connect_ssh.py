@@ -58,14 +58,14 @@ class get_mikrotik_connect_ssh():
 	def __get_commands__(self, commands):
 		if isinstance(commands, dict):
 			for (enum,command) in enumerate(commands):
-				print(utility.Clr.YELLOW+"command #"+str(enum)+":",utility.Clr.RST+utility.Clr.BLUE+commands[command]+utility.Clr.RST)
+				print(utility.Clr.YELLOW + "command #" + str(enum) + ":", utility.Clr.RST + utility.Clr.BLUE + commands[command] + utility.Clr.RST)
 				get_response = self.__get_command__(commands[command])
 		elif isinstance(commands, list):
 			for (enum,command) in enumerate(commands):
-				print(utility.Clr.YELLOW+"command #"+str(enum)+":",utility.Clr.BLUE+command+utility.Clr.RST)
+				print(utility.Clr.YELLOW + "command #" + str(enum) + ":", utility.Clr.BLUE + command + utility.Clr.RST)
 				get_response = self.__get_command__(command)
 		elif isinstance(commands, str):
-			print(utility.Clr.YELLOW+"command #0:",utility.Clr.BLUE+commands+utility.Clr.RST)
+			print(utility.Clr.YELLOW + "command #0:", utility.Clr.BLUE + commands + utility.Clr.RST)
 			get_response = self.__get_command__(commands)
 		else:
 			print("Are instance dict, list, str?")
@@ -87,10 +87,10 @@ class get_mikrotik_connect_ssh():
 			try:
 				if get: 
 					get_response = Client.get_sftp_client_get(remotepath, localpath)
-					print(utility.Clr.GREEN+"Successful sftp! Get:",utility.Clr.RST+remotepath)
+					print(utility.Clr.GREEN + "Successful sftp! Get:", utility.Clr.RST + remotepath)
 				else:
 					get_response = Client.get_sftp_client_put(localpath, remotepath)
-					print(utility.Clr.GREEN+"Successful sftp! Put:",utility.Clr.RST+remotepath)
+					print(utility.Clr.GREEN + "Successful sftp! Put:", utility.Clr.RST + remotepath)
 				Client.get_ssh_client(self.command_beep);
 				return True
 			except Exception as error:

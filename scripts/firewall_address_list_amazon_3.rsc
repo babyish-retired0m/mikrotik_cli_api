@@ -1,3 +1,5 @@
+/ip firewall filter add chain=input action=drop dst-address-list=amazon comment="def2conf: traffic" place-before=6;
+/ip firewall filter add chain=forward action=drop dst-address-list=amazon comment="def2conf: traffic" place-before=6;
 /ip firewall address-list
 add address="_domainkey.amazonaws.com" list=amazon
 add address="0bxxaty1ad.execute-api.us-east-1.amazonaws.com" list=amazon
