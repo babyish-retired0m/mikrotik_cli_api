@@ -1,1 +1,1 @@
-/system script add name="NordVPNNight" source=\":do {/system/scheduler set NordVPNDay2 disabled=yes;/system/scheduler set NordVPNNight2 disabled=no;:beep;}\";
+/system script add name="NordVPNNight" source=":do {/system/scheduler set NordVPNDay2 disabled=yes;/system/scheduler set NordVPNNight2 disabled=no;:beep;}";

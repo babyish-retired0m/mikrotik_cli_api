@@ -53,9 +53,8 @@ class Cli_api:
 			print("{}Warning: firewall address list CountryIPBlocks Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
 			self.mikrotik.Get_ip_firewall_address_list_CountryIPBlocks()
 		elif user_args.firewall_amazon:
-			#print("Get_ip_firewall_address_list_amazon")
 			print("{}Warning: firewall address list Amazon Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
-			self.mikrotik.Get_ip_firewall_address_list_amazon()
+			self.mikrotik.script_utility("firewall_address_list_amazon.rsc")
 		elif user_args.system_reboot:
 			#print("Get system reboot")
 			self.mikrotik.Get_system_reboot()
@@ -87,6 +86,10 @@ class Cli_api:
 			self.Get_mikrotik.get_sftp_client(remotepath, localpath, get = False)
 		elif user_args.dns:
 			self.mikrotik.Get_dns_attack_prevention()
+		elif user_args.dns_static_hosts:
+			print("{}Warning: mikrotik dns static address list Create is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
+			#self.mikrotik.script_utility(script = "dns_static_hosts.rsc")
+			self.mikrotik.script_utility(script = "dns_static_hosts_ip6.rsc")
 	def get_args(self, json_args={}):
 		"""Set argparse options."""
 		self.parser=argparse.ArgumentParser(add_help=False,description="Collect of useful commands for mikrotik's:")	
@@ -112,7 +115,8 @@ class Cli_api:
 		group.add_argument('-SC', '--send', dest='send_command', action='extend', nargs='+', type=str, help="send command as input, comment \" \\\"")
 		group.add_argument('-g', '--get', dest='sftp_get', type=pathlib.Path, help="mikrotik sftp get, remote file name")
 		group.add_argument('-p', '--put', dest='sftp_put', type=pathlib.Path, help="mikrotik sftp put, local file path")
-		group.add_argument('-dn', '--dns', dest='dns', action='store_true', default=False, help="mikrotik get ip dns attack prevention")
+		group.add_argument('-dA', '--dns', dest='dns', action='store_true', default=False, help="mikrotik get ip dns attack prevention")
+		group.add_argument('-dH', '--dns_hosts', dest='dns_static_hosts', action='store_true', default=False, help="mikrotik add addresses ip dns static hosts")
 		
 		args = self.parser.parse_args();
 		return args

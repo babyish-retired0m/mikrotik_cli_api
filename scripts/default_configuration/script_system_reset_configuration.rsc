@@ -1,3 +1,1 @@
-/system script add comment=def2conf name=\
-    system_reset_configuration source=\
-    ":execute {/system/reset-configuration;:delay 1;:put y;}"
+/system script add comment=def2conf name=system_reset_configuration source=":do {/system/reset-configuration;:delay 1;:put y;}"

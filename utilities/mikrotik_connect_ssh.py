@@ -37,7 +37,8 @@ class get_mikrotik_connect_ssh():
 		self.mikrotik_default_password = password.create(1)
 		self.host = "192.168.88.1"
 		self.port = "22"
-		self.bit = 8192;#4096
+		#self.bit = 8192;#4096
+		self.bit = 4096
 		self.days = 256
 		self.algorithm = "sha256"
 		_connect_default_1, _connect_default_2 = False, False

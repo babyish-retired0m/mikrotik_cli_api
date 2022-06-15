@@ -1,0 +1,41 @@
+{
+    "configuration": {
+        "host": "192.168.88.1",
+        "bit": 8192,
+        "days": 256,
+        "algorithm": "sha256",
+        "mikrotik_parent_dir": "/Users/jozbox/python/mikrotik_cli_api/",
+        "mikrotik_parent_dir_openssl": "/Users/jozbox/python/mikrotik_cli_api/openssl/",
+        "connect_default_1": true,
+        "connect_default_2": true,
+        "connect_private_key": true,
+        "commands_default": true
+    },
+    "connect_default_1": {
+        "host": "192.168.88.1",
+        "port": "22",
+        "username": "admin",
+        "password": null,
+        "pkey_path": null,
+        "pkey_password": null,
+        "pkey_length": null
+    },
+    "connect_default_2": {
+        "host": "192.168.88.1",
+        "port": "22",
+        "username": "admin",
+        "password": "82b8098YaeVgXQY9IJ2XaURKI7mAONWH9LYSDg1rEXIc03EhHBGDY1iWXxgy",
+        "pkey_path": null,
+        "pkey_password": null,
+        "pkey_length": null
+    },
+    "connect_private_key": {
+        "host": "192.168.88.1",
+        "port": "22",
+        "username": "2022-06-12_18-25_qsqyTKtNrRJffuxvv13Hnov1JRm.TBLT4vdiejqYy8o5G",
+        "password": "VvXBljBdNdlX8JILOwsewmPyLUGgRTaDDU2Y.Wu2gP5FGvzG",
+        "pkey_path": "/Users/jozbox/python/mikrotik_cli_api/openssl/192.168.88.1/ssh-keygen/rsa/12_06_2022/id_rsa",
+        "pkey_password": "52b50659F4jHxTeUxKgpxY5ewXpVexdCRRlPRxhggA10f1AJhowV8xye.DYf6",
+        "pkey_length": 60
+    }
+}

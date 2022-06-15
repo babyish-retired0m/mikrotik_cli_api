@@ -44,6 +44,7 @@ class Create_Certificate:
 		#certificate_signed
 		self.key_crt=domain+".crt"
 		self.key_pub=domain+".pub"
+		self.key_pub_rsa=domain+"_rsa.pub"
 		#bit long modulus 2048 /* 4096, 8196,16392,32784,65568*/
 		self.bit=str(bit)
 		#bit="8196" #Signed by not Verified
@@ -116,6 +117,7 @@ class Create_Certificate:
 		#private key the private key
 		config = self.parameters['key']['configuration']
 		os.system(f"openssl genrsa -des3 -passout pass:'{self.passphrase_key}' -out '{self.path+self.key}' {self.bit}")
+		#os.system(f"openssl genrsa -des3 -passout pass:'{self.passphrase_key}' -out '{self.path+self.key}' -pubout -out {self.path} + {self.key_pub} {self.bit}")
 		os.system(f"chmod 400 {self.path + self.key}")
 		#create a CSR the certificate signing request
 		os.system(f"openssl req -new -key {self.path + self.key} -passin pass:{self.passphrase_key} -out {self.path + self.key_csr} -subj '/CN={config['CN']}/subjectAltName={config['subjectAltName']}/authorityKeyIdentifier={config['authorityKeyIdentifier']}/basicConstraints={config['basicConstraints']}/keyUsage={config['keyUsage']}/C={config['C']}/ST={config['ST']}/L={config['L']}/O={config['O']}/OU={config['OU']}/'")
@@ -133,9 +135,10 @@ class Create_Certificate:
 		File.write_text_as_json(self.path + self.config, self.parameters)
 		return self.path + self.config + ".json"
 	def Key_pub(self):
-		self.parameters["key"]["pub"] = {"path":self.path + self.key_pub, "outform":"PEM", "name":self.key_pub}
+		self.parameters["key"]["pub"] = {"path":self.path + self.key_pub, "outform":"PEM", "name":self.key_pub, "path_rsa":self.path + self.key_pub_rsa, "name_rsa":self.key_pub_rsa}
 		#Creating pub
 		os.system(f"openssl rsa -in {self.path + self.key} -passin pass:{self.passphrase_key} -pubout -out {self.path + self.key_pub}")# -outform PEM
+		os.system(f"openssl rsa -in {self.path + self.key} -passin pass:{self.passphrase_key} -RSAPublicKey_out -out {self.path}{self.key_pub_rsa}")# -outform PEM
 		File.write_text_as_json(self.path + self.config, self.parameters)
 		return self.path + self.config + ".json"
 if __name__ == '__main__':

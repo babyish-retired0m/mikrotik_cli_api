@@ -41,15 +41,18 @@ class mikrotik_get_commands():
 		mikrotik_username_private_key = self.mikrotik.connect_configuration["connect_private_key"]["username"]
 		passphrase = password.create(1); mikrotik_password = passphrase[0][15:]
 		mikrotik_username_new = time.strftime("%Y-%m-%d_%H-%M", time.localtime()) + "_" + mikrotik_password
-		if self.mikrotik.get_sftp_client("/"+mikrotik_certificate_config["key"]["pub"]["name"], mikrotik_certificate_config["key"]["pub"]["path"], get=False):
-			if self.mikrotik.send_commands(":local o [/system/script find name=user_add];:if ([:len $o] != 0) do={/system/script remove user_add;:log info \"script user_add removed\";:beep;};/system script add name=user_add source=\":execute {/user add address=192.168.88.0/24 group=full name=\\\""+mikrotik_username_new+"\\\" password=\\\"" + mikrotik_password + "\\\";:log info \\\"user " + mikrotik_username_new[:15] + "... added\\\";:beep;/user/ssh-keys/import public-key-file=" + mikrotik_certificate_config['key']['pub']['name'] + " user=" + mikrotik_username_new + ";:log info \\\"public-key-file imported user " + mikrotik_username_new + "\\\";:beep;}\""):
+		#if self.mikrotik.get_sftp_client("/"+mikrotik_certificate_config["key"]["pub"]["name"], mikrotik_certificate_config["key"]["pub"]["path"], get=False):
+		if self.mikrotik.get_sftp_client("/"+mikrotik_certificate_config["key"]["pub"]["name_rsa"], mikrotik_certificate_config["key"]["pub"]["path_rsa"], get=False):
+			#if self.mikrotik.send_commands(":local o [/system/script find name=user_add];:if ([:len $o] != 0) do={/system/script remove user_add;:log info \"script user_add removed\";:beep;};/system script add name=user_add source=\":execute {/user add address=192.168.88.0/24 group=full name=\\\""+mikrotik_username_new+"\\\" password=\\\"" + mikrotik_password + "\\\";:log info \\\"user " + mikrotik_username_new[:15] + "... added\\\";:beep;/user/ssh-keys/import public-key-file=" + mikrotik_certificate_config['key']['pub']['name'] + " user=" + mikrotik_username_new + ";:log info \\\"public-key-file imported user " + mikrotik_username_new + "\\\";:beep;}\""):
+			if self.mikrotik.send_commands(":local o [/system/script find name=user_add];:if ([:len $o] != 0) do={/system/script remove user_add;:log info \"script user_add removed\";:beep;};/system script add name=user_add source=\":execute {/user add address=192.168.88.0/24 group=full name=\\\""+mikrotik_username_new+"\\\" password=\\\"" + mikrotik_password + "\\\";:log info \\\"user " + mikrotik_username_new[:15] + "... added\\\";:beep;/user/ssh-keys/import public-key-file=" + mikrotik_certificate_config['key']['pub']['name_rsa'] + " user=" + mikrotik_username_new + ";:log info \\\"public-key-file imported user " + mikrotik_username_new + "\\\";:beep;}\""):
 				print("user/ssh-key public-key-file imported")
 				if self.mikrotik.send_commands("/system/script run user_add;:log info \"script run user_add\";:beep"):
 					print("user " + mikrotik_username_new[:15] + "... added")
 					if self.mikrotik.send_commands("/system/script remove user_add;:log info \"script user_add removed\";:beep"):
 						print("script user_add removed")
-						if self.mikrotik.send_commands("/user remove \"" + mikrotik_username_private_key + "\";:beep"):
-							print("user " + mikrotik_username_private_key[:15] + " removed")
+						#if self.mikrotik.send_commands("/user remove \"" + mikrotik_username_private_key + "\";:beep"):
+						if self.mikrotik.send_commands(":beep"):
+							#print("user " + mikrotik_username_private_key[:15] + " removed")
 							self.mikrotik.connect_configuration["configuration"]["connect_private_key"] = True
 							self.mikrotik.connect_configuration["connect_private_key"]["username"] = mikrotik_username_new
 							self.mikrotik.connect_configuration["connect_private_key"]["password"] = mikrotik_password
@@ -90,10 +93,6 @@ class mikrotik_get_commands():
 			print("{}Warning: nordvpn Create mikrotik is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
 			self.script_utility("script_certificate_LocalCA.rsc")
 			self.script_utility("script_certificate_GeneratedNordVPN.rsc")
-			"""if self.mikrotik.get_sftp_client("/" + "nordvpn_root.der", self.mikrotik.mikrotik_parent_dir + "nordvpn.com/" + "nordvpn_root.der", get=False):
-				self.mikrotik.send_commands("/certificate import file-name=nordvpn_root.der name=nordvpn_root passphrase=\"\";:beep")
-				#self.mikrotik.send_commands("/ip/ipsec/identity/set 0 certificate=nordvpn_root;:beep")
-			else: sys.exit(1)"""
 		def __import_nordvpn_servers__():
 			script_files = ["nordvpn.com_Standard_VPN_servers_ipsec_peer_country.rsc", "nordvpn.com_Standard_VPN_servers_dns_static_country.rsc", "nordvpn.com_Standard_VPN_servers_firewall_address_list_country.rsc"]
 			for script in script_files: self.script_utility(script)
@@ -106,9 +105,7 @@ class mikrotik_get_commands():
 	def Get_ip_dns_over_https(self):
 		if self.mikrotik.get_sftp_client("cacert.pem", self.mikrotik.mikrotik_parent_dir + "configuration/cacert.pem", get=False): print("DNS over https True") if self.script_utility("dns_over_https.rsc") else print("DNS over https False")
 	def Get_ip_firewall_address_list_CountryIPBlocks(self):
-		self.script_utility("firewall_address_list_CountryIPBlocks.rsc")
-	def Get_ip_firewall_address_list_amazon(self):
-		self.script_utility("firewall_address_list_amazon.rsc")
+		self.script_utility("firewall_address_list_CountryIPBlocks.rsc")		
 	def Get_system_reboot(self):
 		if self.mikrotik.send_commands(":beep;/system/script run system_reboot"): print("system rebooted")
 	def Get_system_shutdown(self):
@@ -170,7 +167,8 @@ class mikrotik_get_commands():
 			return True if self.mikrotik.get_sftp_client(remotepath = remotepath, localpath = localpath, get = False) else False
 		def script_system():
 			self.script_name = __script_replace__()
-			print("script :" + self.script_name + " removed") if __script_remove__() else print("therefore no existing \"" + self.script_name + "\" script")
+			if __script_check__():
+				print("script :" + self.script_name + " removed") if __script_remove__() else print("therefore no existing \"" + self.script_name + "\" script")
 			if __send_script__():
 				return True if __script_run__() else False
 			else:
