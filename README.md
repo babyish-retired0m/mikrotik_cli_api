@@ -3,6 +3,8 @@ Collect of useful commands for mikrotik's should be invoked on the command line.
 
 ## Requirements
  - Reset mikrotik system configuration to defaults.
+ - ### Install required Python packages
+   `pip install -r requirements.txt`
 
 ## Usage
 The recommended way to use mikrotik_cli_api is to use `python3`:
