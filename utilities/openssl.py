@@ -4,7 +4,7 @@ Copyright 2022. All rights reserved.
 
 brew install openssl@1.1
 """
-__version__ = "1.6"
+__version__ = "1.7"
 #Creating CA Certificates
 import os
 import utilities.file as file
@@ -26,9 +26,9 @@ class Create_Certificate:
 		self.EmailAddress="noreply@mergebot.com"
 		
 		self.domain=domain
-		self.passphrase_ca, length, time_to_generate = password.create(1)
-		self.passphrase_key, length, time_to_generate = password.create(1)
-		passphrase_key_crt, length, time_to_generate = password.create(1)
+		self.passphrase_ca, length_ca, time_to_generate_ca = password.create(1)
+		self.passphrase_key, length_key, time_to_generate_key = password.create(1)
+		passphrase_key_crt, length_key_crt, time_to_generate_key_crt = password.create(1)
 		self.passphrase_key_crt=passphrase_key_crt[:6]
 		#private key
 		self.key_ca=domain+"_CA.key.pem"
@@ -37,6 +37,7 @@ class Create_Certificate:
 		self.certificate_ca_signed=domain+"_CA.crt"
 		#private key
 		self.key=domain+".key.pem"
+		self.key_rsa=domain+".key.rsa.pem"
 		self.key_p12=domain+".p12"
 		#create a CSR
 		self.key_csr=domain+".csr"
@@ -80,16 +81,26 @@ class Create_Certificate:
 						}
 		File.write_text_as_json(self.path+self.config,self.parameters)
 		print("Directory parent:",parent_dir)
-	def All(self):
+	
+
+	def Create_All(self):
 		self.Key_CA()
 		self.Key_Private()
 		self.Key_p12()
 		self.Key_pub()
 		return self.path + self.config + ".json"
+
+	def Create_Key_Private(self):
+		self.Key_Private()
+		self.Key_pub()
+		return self.path + self.config + '.json'
 		
+	
 	def write_text_json(self, path, text):
 		import json
 		json.dump(text, fp = open(path+".json",'w'),indent = 4)
+	
+
 	def Key_CA(self):
 		self.parameters["ca"]={
 				"private_key":{"password":self.passphrase_ca, "path":self.path+self.key_ca, "bit":self.bit, "name":self.key_ca},
@@ -106,9 +117,12 @@ class Create_Certificate:
 		
 		File.write_text_as_json(self.path+self.config,self.parameters)
 		return self.path+self.config+".json"
+	
+
 	def Key_Private(self):
 		self.parameters["key"] = {
 				"private_key":{"password":self.passphrase_key, "path":self.path+self.key, "bit":self.bit, "name":self.key},
+				"private_key_rsa":{"password":self.passphrase_key, "path":self.path+self.key_rsa, "bit":self.bit, "name":self.key_rsa},
 				"configuration":{
 						"CN":self.domain, "subjectAltName":self.domain, "authorityKeyIdentifier":"keyid,issuer", "basicConstraints":"CA:FALSE", "keyUsage":"digitalSignature,nonRepudiation,keyEncipherment,dataEncipherment", "C":self.C, "ST":self.ST, "L":self.L, "O":self.O, "OU":self.OU, "emailAddress":self.EmailAddress
 								},
@@ -117,23 +131,34 @@ class Create_Certificate:
 		#private key the private key
 		config = self.parameters['key']['configuration']
 		os.system(f"openssl genrsa -des3 -passout pass:'{self.passphrase_key}' -out '{self.path+self.key}' {self.bit}")
+		os.system(f"openssl rsa -in '{self.path+self.key}' -passin pass:'{self.passphrase_key}' -out '{self.path+self.key_rsa}' -passout pass:'{self.passphrase_key}'")
+		
+		#os.system(f"openssl pkey -des3 -in '{self.path+self.key}' -passin pass:'{self.passphrase_key}' -out '{self.path+self.key_rsa}' -passout pass:'{self.passphrase_key}'")
+
+		# os.system(f"openssl pkey -des3 -outform PEM -passout pass:'{self.passphrase_key}' -out '{self.path+self.key}' {self.bit}")
+
 		#os.system(f"openssl genrsa -des3 -passout pass:'{self.passphrase_key}' -out '{self.path+self.key}' -pubout -out {self.path} + {self.key_pub} {self.bit}")
 		os.system(f"chmod 400 {self.path + self.key}")
-		#create a CSR the certificate signing request
-		os.system(f"openssl req -new -key {self.path + self.key} -passin pass:{self.passphrase_key} -out {self.path + self.key_csr} -subj '/CN={config['CN']}/subjectAltName={config['subjectAltName']}/authorityKeyIdentifier={config['authorityKeyIdentifier']}/basicConstraints={config['basicConstraints']}/keyUsage={config['keyUsage']}/C={config['C']}/ST={config['ST']}/L={config['L']}/O={config['O']}/OU={config['OU']}/'")
+		
 		if self.key_signing:
+			#create a CSR the certificate signing request
+			os.system(f"openssl req -new -key {self.path + self.key} -passin pass:{self.passphrase_key} -out {self.path + self.key_csr} -subj '/CN={config['CN']}/subjectAltName={config['subjectAltName']}/authorityKeyIdentifier={config['authorityKeyIdentifier']}/basicConstraints={config['basicConstraints']}/keyUsage={config['keyUsage']}/C={config['C']}/ST={config['ST']}/L={config['L']}/O={config['O']}/OU={config['OU']}/'")
 			self.parameters["key"]["certificate"] = {"algorithm":self.algorithm, "days":self.days, "path":self.path+self.key_crt, "pass":self.passphrase_key_crt, "name":self.key_crt}
 			#Create Certificate the signed certificate
 			os.system(f"openssl x509 -req -passin pass:'{self.passphrase_ca}' -CA {self.path+self.key_ca_certificate} -CAkey {self.path+self.key_ca} -CAcreateserial -in {self.path+self.key_csr} -out {self.path+self.key_crt} -days {self.days} -{self.algorithm}")
 		
 		File.write_text_as_json(self.path + self.config, self.parameters)
 		return self.path + self.config + ".json"
+	
+
 	def Key_p12(self):
 		self.parameters["key"]["p12"] = {"password":self.passphrase_key_crt, "path":self.path + self.key_p12, "name":self.key_p12}
 		#Creating p12
 		os.system(f"openssl pkcs12 -export -out {self.path + self.key_p12} -passout pass:'{self.passphrase_key_crt}' -in {self.path + self.key_crt} -inkey {self.path + self.key} -passin pass:{self.passphrase_key}")
 		File.write_text_as_json(self.path + self.config, self.parameters)
 		return self.path + self.config + ".json"
+	
+
 	def Key_pub(self):
 		self.parameters["key"]["pub"] = {"path":self.path + self.key_pub, "outform":"PEM", "name":self.key_pub, "path_rsa":self.path + self.key_pub_rsa, "name_rsa":self.key_pub_rsa}
 		#Creating pub
@@ -141,9 +166,12 @@ class Create_Certificate:
 		os.system(f"openssl rsa -in {self.path + self.key} -passin pass:{self.passphrase_key} -RSAPublicKey_out -out {self.path}{self.key_pub_rsa}")# -outform PEM
 		File.write_text_as_json(self.path + self.config, self.parameters)
 		return self.path + self.config + ".json"
+
+
 if __name__ == '__main__':
 	Get_openssl = Create_Certificate("192.168.88.1")
-	Get_openssl.All()
+	Get_openssl.Create_All()
+	#Get_openssl.Create_Key_Private()
 	"""Get_openssl.Key_CA()
 	Get_openssl.Key_Private()
 	Get_openssl.Key_p12()

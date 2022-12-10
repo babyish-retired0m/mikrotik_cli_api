@@ -6,6 +6,12 @@ import utilities.mikrotik_commands as mikrotik_commands
 import os
 import sys
 import pathlib
+
+import commands.clock as Clock
+import commands.dns as DNS
+import commands.scheduler as Scheduler
+
+
 class Cli_api:
 	"""
 	usage:
@@ -14,6 +20,9 @@ class Cli_api:
 	def __init__(self, mikrotik_parent_dir = os.path.dirname(__file__) + "/"):
 		self.Get_mikrotik = mikrotik_connect_ssh.get_mikrotik_connect_ssh(mikrotik_parent_dir)
 		self.mikrotik = mikrotik_commands.mikrotik_get_commands(self.Get_mikrotik)
+
+
+
 	def get_result(self, user_args):
 		"""Get the context."""
 		if user_args.beep:
@@ -90,6 +99,10 @@ class Cli_api:
 			print("{}Warning: mikrotik dns static address list Create is enabled. It takes more time...{}\n".format('\033[33m', '\033[39m'))
 			#self.mikrotik.script_utility(script = "dns_static_hosts.rsc")
 			self.mikrotik.script_utility(script = "dns_static_hosts_ip6.rsc")
+		elif user_args.main:
+			self.mikrotik.main()
+
+
 	def get_args(self, json_args={}):
 		"""Set argparse options."""
 		self.parser=argparse.ArgumentParser(add_help=False,description="Collect of useful commands for mikrotik's:")	
@@ -117,9 +130,11 @@ class Cli_api:
 		group.add_argument('-p', '--put', dest='sftp_put', type=pathlib.Path, help="mikrotik sftp put, local file path")
 		group.add_argument('-dA', '--dns', dest='dns', action='store_true', default=False, help="mikrotik get ip dns attack prevention")
 		group.add_argument('-dH', '--dns_hosts', dest='dns_static_hosts', action='store_true', default=False, help="mikrotik add addresses ip dns static hosts")
+		group.add_argument('-m', '--main', dest='main', action='store_true', default=False, help='Send main commands result')
 		
 		args = self.parser.parse_args();
 		return args
+
 
 if __name__ == '__main__':
 	import start_main_api

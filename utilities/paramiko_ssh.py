@@ -2,7 +2,9 @@
 """
 Copyright 2022. All rights reserved.
 """
-__version__ = "1.2"
+__version__ = "1.4"
+#1.4 get_ssh_client_results()
+
 try:
 	import paramiko
 except ImportError:
@@ -34,11 +36,17 @@ class Connect():
 			#logging.getLogger("paramiko").setLevel(logging.ERROR)
 			#logging.getLogger("paramiko").setLevel(logging.INFO)
 			#logging.getLogger("paramiko").setLevel(logging.CRITICAL)
-	def __get_connect__(self):
+	
+
+	def __get_paramiko_log_path(self):
 		dir_logs = os.path.expanduser('~') + "/Library/Logs/"
 		log_path = dir_logs + "Paramiko/"
 		if File.check_dir(log_path) is False: File.dirs_make(log_path)
-		paramiko.util.log_to_file(log_path + "paramiko.log")
+		if File.check_dir(log_path): paramiko.util.log_to_file(log_path + "paramiko.log")
+	
+
+	def __get_connect__(self):
+		self.__get_paramiko_log_path()
 		ssh_client = paramiko.SSHClient()
 		# To avoid an "unknown hosts" error. Solve this differently if you must...
 		ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -50,6 +58,7 @@ class Connect():
 			print("Path key is:", self.pkey_path)
 			print("Password key is:", self.pkey_password)"""
 			if self.pkey_password is not None:
+				print("This mechanism uses a private key:", self.pkey_path, " private key password:",self.password[:15]+"..."," username:",self.username,end=" ")
 				self.pkey = paramiko.RSAKey.from_private_key_file(self.pkey_path,self.pkey_password)
 			else:
 				self.pkey = paramiko.RSAKey.from_private_key_file(self.pkey_path)
@@ -69,6 +78,38 @@ class Connect():
 		                       )
 		#print(ssh_client)
 		return ssh_client
+	
+
+
+	def get_BaseCommand(self, command):
+		ssh_client = self.__get_connect__()
+		
+		result = None
+		try:
+			# 
+			# stdin , stdout, stderr = ssh_client.exec_command(command)
+			# result = str(stdout.read())
+			# #
+			chan = ssh_client.get_transport().open_session()
+			chan.exec_command(command)
+
+			if chan.recv_exit_status() != 0:
+				print(traceback.format_exc(), file = chan.recv_stderr(5000))
+			else:
+				stdin = chan.recv_stdin()
+				stdout = chan.recv_stdout()
+				stderr = chan.recv_stderr()
+				result = str(stdout.read())
+				return result
+		except Exception as e:
+			#
+			print(traceback.format_exc(), file = sys.stderr)
+			# #
+			# print(traceback.format_exc(), file = chan.recv_stderr())
+			# raise e
+		return result
+
+
 	def get_ssh_client(self,command):
 		#print("Command is:",command)
 		ssh_client=self.__get_connect__()
@@ -105,6 +146,8 @@ class Connect():
 			self.recv_status = "recv_status True"
 			#print("self.recv_status",self.recv_status)
 			return True
+	
+
 	def get_sftp_client_get(self,remotepath, localpath):
 		ssh_client=self.__get_connect__()
 		sftp=ssh_client.open_sftp()
@@ -113,6 +156,8 @@ class Connect():
 			sftp.close()
 			return True
 		if ssh_client: ssh_client.close()
+	
+
 	def get_sftp_client_put(self,localpath, remotepath):
 		ssh_client=self.__get_connect__()
 		sftp=ssh_client.open_sftp()
@@ -121,9 +166,12 @@ class Connect():
 			sftp.close()
 			return True
 		if ssh_client: ssh_client.close()
+
+
+
 if __name__ == '__main__':
 	import json
-	configuration=json.load(open("/Users/jozbox/python/mikrotik_cli_api/configuration/connect_configuration.txt"))
+	configuration=json.load(open("./configuration/connect_configuration.txt"))
 	get_Connect=Connect(host=configuration["connect_private_key"]["host"],
 						port=configuration["connect_private_key"]["port"],
 						username=configuration["connect_private_key"]["username" ],

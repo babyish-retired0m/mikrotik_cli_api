@@ -2,11 +2,7 @@
 """
 Copyright 2022. All rights reserved.
 """
-__version__ = "1.5"
-# __get_command__()
-# __get_commands__()
-# send_commands()
-# __get_commands_default__()
+__version__ = "1.4"
 import os
 import json
 import time
@@ -22,7 +18,7 @@ class get_mikrotik_connect_ssh():
 	mikrotik.get_sftp_client() - get_sftp_client(remotepath, localpath, get=False). get=False - get sftp, get=True - put sftp.
 	mikrotik.send_commands() - send_commands(":beep frequency=5000 length=100ms"). command(s) dict, list, str.
 	"""
-	def __init__(self, mikrotik_parent_dir = os.path.expanduser('~') + "/mikrotik/"):
+	def __init__(self, mikrotik_parent_dir = os.path.expanduser('~')+"/mikrotik/"):
 		_connect_configuration = "configuration/connect_configuration.txt"
 		_commands_default_path = "configuration/commands_default.txt"
 		_dir_openssl = "openssl"
@@ -36,8 +32,6 @@ class get_mikrotik_connect_ssh():
 		self.commands_default_path = self.mikrotik_parent_dir + _commands_default_path
 		self.command_beep = ":beep frequency=5000 length=10ms"
 		self.command_beep_100 = ":beep frequency=5000 length=100ms"
-	
-
 	def __create_connect_configuration_dict__(self):
 		self.mikrotik_default_username = "admin"
 		self.mikrotik_default_password = password.create(1)
@@ -62,8 +56,6 @@ class get_mikrotik_connect_ssh():
 		"pkey_path": None, "pkey_password": None, "pkey_length": None}}
 		json.dump(self.connect_configuration_dict, fp = open(self.connect_configuration_path, 'w'), indent = 4)
 		return self.connect_configuration_dict
-	
-
 	def __get_commands__(self, commands):
 		if isinstance(commands, dict):
 			for (enum,command) in enumerate(commands):
@@ -79,24 +71,15 @@ class get_mikrotik_connect_ssh():
 		else:
 			print("Are instance dict, list, str?")
 			return False
-		# return True if get_response else False
-		return get_response
-	
-
+		return True if get_response else False
 	def __get_command__(self, command):
 		Client = self.__get_connect_configuration__()
-		"""
 		try:
 			return True if Client.get_ssh_client(command) else False
 		except Exception as error:
 			print("Command failed");
 			print(error); 
 			return False
-		"""
-		result = Client.get_BaseCommand(command)
-		return result
-	
-
 	def get_sftp_client(self, remotepath, localpath, get = False):
 		def __get_sftp_check_path__(localpath):
 			return True if pathlib.Path(localpath).exists() else print("False existing file:", localpath); sys.exit(1)
@@ -114,7 +97,6 @@ class get_mikrotik_connect_ssh():
 			except Exception as error:
 				print("Command sftp failed"); print(error); return 
 	
-	
 	def __get_connect_configuration__(self):
 		connect_conf = self.__get_configuration__()
 		host, port = connect_conf["host"], connect_conf["port"]
@@ -123,52 +105,36 @@ class get_mikrotik_connect_ssh():
 		pkey_password = connect_conf["pkey_password"]
 		Client = paramiko_ssh.Connect(host = host, port = port, username = username, password = password, pkey_path = pkey_path, pkey_password = pkey_password, log = False)
 		return Client
-	
-
 	def __get_configuration__(self):
 		if self.connect_configuration["configuration"]["connect_default_1"] is False: configuration = self.connect_configuration["connect_default_1"]
 		elif self.connect_configuration["configuration"]["connect_default_2"] is False: configuration = self.connect_configuration["connect_default_2"]
 		elif self.connect_configuration["configuration"]["connect_private_key"] is False: configuration = self.connect_configuration["connect_default_2"]
 		else: configuration = self.connect_configuration["connect_private_key"]
 		return configuration
-	
-
-	def __get_commands_default__(self):
-		commands_default = json.load(open(self.commands_default_path))
-		utility.print_red2("Default commands are False")
-
-		if self.connect_configuration["configuration"]["connect_default_1"] is False:
-			commands_default["commands_default_1"]["user_password_access"] = "/user set admin password=\"" + self.connect_configuration["connect_default_2"]["password"] + "\""
-			result = self.__get_commands__(commands_default["commands_default_1"]["user_password_access"])
-				if result:
-				self.connect_configuration["configuration"]["connect_default_1"] = True
-				json.dump(self.connect_configuration, fp = open(self.connect_configuration_path, 'w'), indent = 4)
-
-		if self.connect_configuration["configuration"]["connect_default_2"] is False:
-			commands_default["commands_default_2"]["system_clock"] = "/system clock set date=" + time.strftime("%b/%d/%Y", time.localtime()).lower() + " time=" + time.strftime("%H:%M:%S", time.localtime()) + ";:beep;"
-			result = self.__get_commands__(commands_default["commands_default_2"])
-			if result:
-				self.connect_configuration["configuration"]["connect_default_2"] = True
-				self.connect_configuration["configuration"]["commands_default"] = True
-				json.dump(self.connect_configuration, fp = open(self.connect_configuration_path, 'w'), indent = 4)
-		return result if self.__get_commands__(commands) else False
-
-
 	def send_commands(self, commands):
 		if self.connect_configuration["configuration"]["commands_default"] is False:
-			if self.__get_commands_default__(): self.send_commands()
+			commands_default = json.load(open(self.commands_default_path))
+			print(utility.Clr.RED2+"Default commands are False"+utility.Clr.RST2)
+			if self.connect_configuration["configuration"]["connect_default_1"] is False:
+				commands_default["commands_default_1"]["user_password_access"] = "/user set admin password=\"" + self.connect_configuration["connect_default_2"]["password"] + "\""
+				if self.__get_commands__(commands_default["commands_default_1"]["user_password_access"]):
+					self.connect_configuration["configuration"]["connect_default_1"] = True
+					json.dump(self.connect_configuration, fp = open(self.connect_configuration_path, 'w'), indent = 4)
+			if self.connect_configuration["configuration"]["connect_default_2"] is False:
+				commands_default["commands_default_2"]["system_clock"] = "/system clock set date=" + time.strftime("%b/%d/%Y", time.localtime()).lower() + " time=" + time.strftime("%H:%M:%S", time.localtime()) + ";:beep;"
+				if self.__get_commands__(commands_default["commands_default_2"]):
+					self.connect_configuration["configuration"]["connect_default_2"] = True
+					self.connect_configuration["configuration"]["commands_default"] = True
+					json.dump(self.connect_configuration, fp = open(self.connect_configuration_path, 'w'), indent = 4)
+			return True if self.__get_commands__(commands) else False
 		else:
-			# return True if self.__connect_default__(commands) else False
-			return self.__connect_default__(commands)
-	
-
+			return True if self.__connect_default__(commands) else False
 	def __connect_default__(self, commands):
-		if self.connect_configuration["configuration"]["connect_private_key"] is False:
-			print(utility.warp_red2("Connect private key is False"))
-			# return True if self.__get_commands__(commands) else False
-			# return self.__get_commands__(commands)
-		#else:# return True if self.__get_commands__(commands) else False
-		return self.__get_commands__(commands)
+		if self.connect_configuration["configuration"]["connect_private_key"]:
+			return True if self.__get_commands__(commands) else False
+		else:
+			print(utility.Clr.RED2 + "Connect private key is False" + utility.Clr.RST2)
+			return True if self.__get_commands__(commands) else False
 
 if __name__ == '__main__':
 	import json
